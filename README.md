@@ -1,6 +1,7 @@
 # Aruba.Api
 
 [![NuGet](https://img.shields.io/nuget/v/Aruba.Api.svg)](https://www.nuget.org/packages/Aruba.Api)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bb86df3b2bde46a1b30ecf539f9b5744)](https://app.codacy.com/gh/panoramicdata/Aruba.Api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
 

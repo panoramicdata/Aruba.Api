@@ -6,17 +6,21 @@ Only the latest released version is supported with security updates.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it responsibly.
+If you discover a security vulnerability, please report it privately. Do **not** open a public
+issue or pull request for a suspected vulnerability.
 
-**Do NOT open a public GitHub issue.**
+Use GitHub's private reporting on this repository: open the **Security** tab and choose
+**Report a vulnerability**. If that channel is unavailable to you, contact the Panoramic Data
+security team via https://www.panoramicdata.com to arrange a private disclosure.
 
-Instead, please email security@panoramicdata.com with:
+Please include, where you can:
 
 - A description of the vulnerability
 - Steps to reproduce the issue
 - Any relevant logs or screenshots
 
-We will acknowledge receipt within 48 hours and aim to provide a fix or mitigation within 7 business days.
+We aim to acknowledge reports within 48 hours and to provide a fix or mitigation within 7 business
+days, although complex issues may take longer.
 
 ## Disclosure Policy
 
@@ -28,11 +32,13 @@ We follow a coordinated disclosure process. We ask that you:
 
 ## Handling of Credentials
 
-This library authenticates using an HPE GreenLake **client_id** / **client_secret**
-pair via the OAuth 2.0 `client_credentials` grant. These are secrets:
+This library authenticates using an HPE (Hewlett Packard Enterprise) GreenLake **client_id** /
+**client_secret** pair via the OAuth 2.0 `client_credentials` grant. Treat both as secrets:
 
-- Never commit them to source control.
+- Do not commit them to source control. If a secret is ever committed, rotate it immediately and
+  remove it from the repository history.
 - Provide them at runtime via configuration, environment variables, user-secrets, or a vault.
-- Access tokens are held in memory only and never logged. The `client_secret` is masked in all log output.
+- Access tokens are kept in memory and are not written to logs. If you enable verbose HTTP logging,
+  the `client_secret` and `Authorization` header are masked.
 
 Thank you for helping keep our software and users safe.

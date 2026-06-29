@@ -48,9 +48,20 @@ internal static class IntegrationTestConfig
 		var clientSecret = section["ClientSecret"];
 
 		var missing = new List<string>();
-		if (string.IsNullOrWhiteSpace(baseAddress)) missing.Add("Aruba:BaseAddress");
-		if (string.IsNullOrWhiteSpace(clientId)) missing.Add("Aruba:ClientId");
-		if (string.IsNullOrWhiteSpace(clientSecret)) missing.Add("Aruba:ClientSecret");
+		if (string.IsNullOrWhiteSpace(baseAddress))
+		{
+			missing.Add("Aruba:BaseAddress");
+		}
+
+		if (string.IsNullOrWhiteSpace(clientId))
+		{
+			missing.Add("Aruba:ClientId");
+		}
+
+		if (string.IsNullOrWhiteSpace(clientSecret))
+		{
+			missing.Add("Aruba:ClientSecret");
+		}
 
 		if (missing.Count > 0)
 		{

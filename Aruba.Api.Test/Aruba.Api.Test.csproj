@@ -3,7 +3,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- CS0436: Refit 12 transitively runs the ReactiveUI.Primitives source generator, which emits
+         an internal marker attribute into both Aruba.Api and this test assembly; InternalsVisibleTo
+         then makes them collide. The attribute is inert, so the duplication is harmless. -->
+    <NoWarn>$(NoWarn);CS1591;CS0436</NoWarn>
     <!-- Enables `dotnet user-secrets` for read-only integration test credentials.
          See usersecrets.example.json for the expected shape. -->
     <UserSecretsId>aruba-api-tests-b8e7a3c2-1f4d-4e6a-9c5b-2a3d4e5f6071</UserSecretsId>

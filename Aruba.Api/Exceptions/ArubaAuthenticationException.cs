@@ -10,7 +10,16 @@ public sealed class ArubaAuthenticationException : ArubaApiException
 	/// <summary>
 	/// Initialises a new instance of the <see cref="ArubaAuthenticationException"/> class.
 	/// </summary>
-	public ArubaAuthenticationException(string message, HttpStatusCode? statusCode = null)
+	public ArubaAuthenticationException(string message)
+		: base(message)
+	{
+	}
+
+	/// <summary>
+	/// Initialises a new instance of the <see cref="ArubaAuthenticationException"/> class with the
+	/// HTTP status code returned by the token endpoint.
+	/// </summary>
+	public ArubaAuthenticationException(string message, HttpStatusCode? statusCode)
 		: base(message)
 	{
 		StatusCode = statusCode;

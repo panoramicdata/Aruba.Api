@@ -21,10 +21,10 @@ internal sealed class MockHttpMessageHandler(Func<HttpRequestMessage, int, HttpR
 		return Task.FromResult(responder(request, index));
 	}
 
-	public static HttpResponseMessage Json(HttpStatusCode statusCode, string json)
+	public static HttpResponseMessage Json(HttpStatusCode statusCode, string content)
 		=> new(statusCode)
 		{
-			Content = new StringContent(json, Encoding.UTF8, "application/json"),
+			Content = new StringContent(content, Encoding.UTF8, "application/json"),
 		};
 
 	public static HttpResponseMessage TokenResponse(string accessToken = "test-token", int expiresIn = 3600)

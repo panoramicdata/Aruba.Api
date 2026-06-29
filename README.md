@@ -183,6 +183,12 @@ typed surface grows; contributions adding typed models are welcome — see
 - Symbols (`snupkg`) published for source debugging.
 - Unit tests run on xUnit v3 with `failSkips` enforced.
 
+## Contributing & roadmap
+
+- [DESIGN.md](DESIGN.md) — repository layout, architecture, and conventions.
+- [PLAN.md](PLAN.md) — roadmap to full API coverage and high code coverage.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to add an endpoint and the quality gates.
+
 ## Links
 
 - [NuGet package](https://www.nuget.org/packages/Aruba.Api)

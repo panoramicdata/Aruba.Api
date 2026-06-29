@@ -50,13 +50,14 @@ foreach (var ap in aps.Items)
 // Get site health
 var sites = await client.SiteHealth.GetAllSitesHealthAsync();
 
-// List and clear alerts
+// List alerts
 var alerts = await client.Alerts.GetAllAsync(new ListQuery { Limit = 50 });
-var accepted = await client.Alerts.ClearAsync(new AlertActionRequest
-{
-    AlertIds = alerts.Items.Select(a => a.Id!).ToList(),
-});
 ```
+
+> **Safe by default:** the client is **read-only unless you opt in**. `IsReadOnly` defaults to
+> `true`, so every `GET` works out of the box, but any mutating call (POST/PUT/PATCH/DELETE) throws
+> an `InvalidOperationException` *before the request is sent*. See
+> [Performing writes](#performing-writes-opt-in) below.
 
 ### Cursor-based paging
 
@@ -74,24 +75,38 @@ do
 while (cursor is not null);
 ```
 
-### Read-only safety
+### Read-only safety (default)
 
-Set `IsReadOnly = true` to guarantee a monitoring integration can never mutate state — any
-non-`GET` request throws before it leaves the process:
+`IsReadOnly` defaults to **`true`** — a client you construct without thinking about it can never
+mutate your tenant. Any non-`GET` request throws an `InvalidOperationException` before it leaves the
+process. This makes monitoring/reporting integrations safe by construction.
+
+### Performing writes (opt in)
+
+To call mutating endpoints (clear alerts, update a device, manage webhooks, run troubleshooting
+commands, …) you must explicitly set `IsReadOnly = false`:
 
 ```csharp
-var options = new ArubaCentralClientOptions
+using var writeClient = new ArubaCentralClient(new ArubaCentralClientOptions
 {
     BaseAddress = ArubaCentralClusters.Europe,
     ClientId = id,
     ClientSecret = secret,
-    IsReadOnly = true,
-};
+    IsReadOnly = false, // opt in to writes
+});
+
+var alerts = await writeClient.Alerts.GetAllAsync(new ListQuery { Limit = 50 });
+await writeClient.Alerts.ClearAsync(new AlertActionRequest
+{
+    AlertIds = alerts.Items.Select(a => a.Id!).ToList(),
+});
 ```
 
 ### Live troubleshooting (asynchronous commands)
 
-Troubleshooting commands are asynchronous: they return a task id you poll for the result.
+Troubleshooting commands are asynchronous: they return a task id you poll for the result. They are
+mutating (`POST`) operations, so they require a client created with `IsReadOnly = false`
+(see [Performing writes](#performing-writes-opt-in)).
 
 ```csharp
 var accepted = await client.AccessPointTroubleshooting.PingAsync(

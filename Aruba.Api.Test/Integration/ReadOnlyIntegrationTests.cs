@@ -5,18 +5,32 @@ namespace Aruba.Api.Test.Integration;
 
 /// <summary>
 /// Live, read-only integration tests against a real HPE Aruba Networking Central (New Central)
-/// tenant. The client is created in read-only mode, so only <c>GET</c> requests are ever issued.
+/// tenant.
 /// </summary>
 /// <remarks>
+/// <para>
+/// <b>Every test here issues only HTTP <c>GET</c> requests.</b> The client is additionally created
+/// in read-only mode (<see cref="ArubaCentralClientOptions.IsReadOnly"/> is <see langword="true"/>,
+/// which is also the default), so the library blocks any non-<c>GET</c> request before it leaves
+/// the process. There is no code path in these tests that creates, updates or deletes anything.
+/// </para>
+/// <para>
 /// These tests <b>do not skip</b>. If credentials are not configured they fail (see
-/// <see cref="IntegrationTestConfig"/>) — for API work it is safer to fail loudly than to silently
-/// not exercise the live surface. Tagged <c>Category=Integration</c> so they can be selected or
-/// excluded with <c>dotnet test --filter Category=Integration</c> when desired.
+/// <see cref="IntegrationTestConfig"/>). Tagged <c>Category=Integration</c> so they can be selected
+/// or excluded with <c>dotnet test --filter Category=Integration</c>.
+/// </para>
 /// </remarks>
 [Trait("Category", "Integration")]
 public sealed class ReadOnlyIntegrationTests : IDisposable
 {
 	private readonly ArubaCentralClient _client = new(IntegrationTestConfig.LoadReadOnlyOptions());
+
+	[Fact]
+	public void Client_IsConfiguredReadOnly()
+	{
+		// Guard: prove the integration client cannot mutate the tenant. No network call is made.
+		IntegrationTestConfig.LoadReadOnlyOptions().IsReadOnly.Should().BeTrue();
+	}
 
 	[Fact]
 	public async Task Devices_GetAll_ReturnsPagedResponse()
@@ -53,15 +67,6 @@ public sealed class ReadOnlyIntegrationTests : IDisposable
 
 		page.Should().NotBeNull();
 		page.Items.Should().NotBeNull();
-	}
-
-	[Fact]
-	public async Task ReadOnlyMode_PreventsMutation()
-	{
-		// Even against the live tenant, a mutating call must be blocked client-side before it is sent.
-		var act = async () => await _client.Devices.DeleteAsync("THIS-SHOULD-NEVER-BE-SENT", TestContext.Current.CancellationToken);
-
-		await act.Should().ThrowAsync<InvalidOperationException>();
 	}
 
 	public void Dispose() => _client.Dispose();

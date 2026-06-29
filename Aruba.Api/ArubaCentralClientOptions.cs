@@ -39,11 +39,12 @@ public class ArubaCentralClientOptions
 	public string UserAgent { get; init; } = "Aruba.Api/1.0";
 
 	/// <summary>
-	/// When <see langword="true"/>, only HTTP <c>GET</c> requests are permitted; any attempt to
-	/// mutate state (POST/PUT/PATCH/DELETE) throws an <see cref="InvalidOperationException"/>.
-	/// Useful as a safety guard for read-only monitoring integrations.
+	/// When <see langword="true"/> (the default — <b>safe by default</b>), only HTTP <c>GET</c>
+	/// requests are permitted; any attempt to mutate state (POST/PUT/PATCH/DELETE, or any other
+	/// non-<c>GET</c> verb) throws an <see cref="InvalidOperationException"/> before the request is
+	/// sent. Set this to <see langword="false"/> to explicitly opt in to write operations.
 	/// </summary>
-	public bool IsReadOnly { get; init; }
+	public bool IsReadOnly { get; init; } = true;
 
 	/// <summary>
 	/// The maximum number of attempts (including the first) for a single request before giving up.

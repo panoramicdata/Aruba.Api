@@ -82,8 +82,7 @@ internal sealed class AuthenticatedBackingOffHandler : DelegatingHandler
 	{
 		if (_options.IsReadOnly && request.Method != HttpMethod.Get)
 		{
-			throw new InvalidOperationException(
-				$"The client is configured as read-only; the {request.Method} request to {request.RequestUri} was blocked.");
+			throw new Exceptions.ArubaReadOnlyViolationException(request.Method, request.RequestUri);
 		}
 	}
 

@@ -25,7 +25,7 @@ public sealed class ArubaCentralClientOptionsBuilder
 	public string UserAgent { get; set; } = "Aruba.Api/1.0";
 
 	/// <inheritdoc cref="ArubaCentralClientOptions.IsReadOnly"/>
-	public bool IsReadOnly { get; set; }
+	public bool IsReadOnly { get; set; } = true;
 
 	/// <inheritdoc cref="ArubaCentralClientOptions.MaxAttemptCount"/>
 	public int MaxAttemptCount { get; set; } = 5;

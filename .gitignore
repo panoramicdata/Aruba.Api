@@ -375,3 +375,6 @@ FodyWeavers.xsd
 
 #Ignore vscode AI rules
 .github\instructions\codacy.instructions.md
+
+# Codacy CLI v2 local download cache (Windows fallback dir)
+.codacy-cli-v2/

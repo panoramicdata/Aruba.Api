@@ -4,10 +4,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- Enables `dotnet user-secrets` for read-only integration test credentials.
+         See usersecrets.example.json for the expected shape. -->
+    <UserSecretsId>aruba-api-tests-b8e7a3c2-1f4d-4e6a-9c5b-2a3d4e5f6071</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
@@ -21,6 +25,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="secrets.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Template only: copy the values into user-secrets (dotnet user-secrets set ...)
+         or supply them as environment variables. Never put real secrets in this file. -->
+    <None Include="usersecrets.example.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

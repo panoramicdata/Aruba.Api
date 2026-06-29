@@ -1,4 +1,4 @@
-namespace Aruba.Api.Test;
+namespace Aruba.Api.Test.Unit;
 
 /// <summary>Canned API response bodies taken from the New Central API documentation examples.</summary>
 internal static class TestData

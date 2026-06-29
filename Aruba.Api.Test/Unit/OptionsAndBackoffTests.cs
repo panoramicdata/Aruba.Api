@@ -1,6 +1,6 @@
 using AwesomeAssertions;
 
-namespace Aruba.Api.Test;
+namespace Aruba.Api.Test.Unit;
 
 public sealed class OptionsAndBackoffTests
 {

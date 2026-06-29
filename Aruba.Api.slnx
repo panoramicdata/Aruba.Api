@@ -13,6 +13,5 @@
     <File Path="version.json" />
   </Folder>
   <Project Path="Aruba.Api.Test/Aruba.Api.Test.csproj" />
-  <Project Path="Aruba.Api.IntegrationTest/Aruba.Api.IntegrationTest.csproj" />
   <Project Path="Aruba.Api/Aruba.Api.csproj" />
 </Solution>

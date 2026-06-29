@@ -28,6 +28,12 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Test
+        env:
+          # Read-only New Central credentials for the live integration tests. Configure these as
+          # repository secrets. The integration tests fail (by design) if they are absent.
+          Aruba__BaseAddress: ${{ secrets.ARUBA_BASEADDRESS }}
+          Aruba__ClientId: ${{ secrets.ARUBA_CLIENTID }}
+          Aruba__ClientSecret: ${{ secrets.ARUBA_CLIENTSECRET }}
         run: dotnet test --no-build --configuration Release --verbosity normal
 
       - name: Pack

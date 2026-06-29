@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace Aruba.Api.Test;
+namespace Aruba.Api.Test.Unit;
 
 /// <summary>
 /// A configurable test transport. A handler delegate decides the response for each request,

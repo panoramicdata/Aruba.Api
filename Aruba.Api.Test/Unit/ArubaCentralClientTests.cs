@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace Aruba.Api.Test;
+namespace Aruba.Api.Test.Unit;
 
 public sealed class ArubaCentralClientTests
 {

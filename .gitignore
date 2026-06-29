@@ -6,6 +6,10 @@
 # NuGet API key
 nuget-key.txt
 
+# Local integration-test credentials (use `dotnet user-secrets` or env vars instead)
+secrets.json
+**/secrets.json
+
 # Stray directories
 PanoramicData.Mapper/
 

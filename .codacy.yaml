@@ -1,0 +1,9 @@
+exclude_paths:
+  - "Aruba.Api/bin/**"
+  - "Aruba.Api/obj/**"
+  - "Aruba.Api.Test/bin/**"
+  - "Aruba.Api.Test/obj/**"
+engines:
+  sonarcsharp:
+    exclude_paths:
+      - "Aruba.Api/Interfaces/**"

@@ -14,7 +14,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.85" />
-    <PackageVersion Include="Refit" Version="12.1.0" />
+    <PackageVersion Include="Refit" Version="13.1.0" />
     <PackageVersion Include="SecurityCodeScan.VS2019" Version="5.6.7" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />

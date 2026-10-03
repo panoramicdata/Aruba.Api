@@ -15,6 +15,36 @@ public sealed class ArubaCentralClientTests
 	};
 
 	[Fact]
+	public void AllApiFacades_AreWiredUp()
+	{
+		using var client = new ArubaCentralClient(Options());
+
+		object?[] facades =
+		[
+			client.AccessPoints, client.Devices, client.Clients, client.Switches, client.Gateways,
+			client.SiteHealth, client.Topology, client.ApplicationVisibility, client.FirewallSessions,
+			client.ClientOnboarding, client.Alerts, client.Insights, client.Reports, client.Webhooks,
+			client.Firmware, client.AccessPointTroubleshooting, client.CxSwitchTroubleshooting,
+			client.AosSwitchTroubleshooting, client.GatewayTroubleshooting, client.Events, client.MspTenants,
+		];
+
+		facades.Should().OnlyContain(f => f != null);
+	}
+
+	[Fact]
+	public void Constructor_WithOptionsOnly_CreatesUsableClient_AndDisposeIsIdempotent()
+	{
+		var client = new ArubaCentralClient(Options());
+
+		client.AccessPoints.Should().NotBeNull();
+
+		// Dispose must be safe to call more than once.
+		client.Dispose();
+		var secondDispose = client.Dispose;
+		secondDispose.Should().NotThrow();
+	}
+
+	[Fact]
 	public async Task GetAllAsync_DeserialisesPagedResponse()
 	{
 		var handler = new MockHttpMessageHandler((request, _) =>

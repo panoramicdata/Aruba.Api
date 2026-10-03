@@ -39,9 +39,17 @@ workstream you are advancing.
 
 ---
 
-## Workstream A — Code coverage (do this first)
+## Workstream A — Code coverage (✅ target met)
 
-**Baseline (at handover): ~40% line coverage (265/663 lines).** Run:
+**Status: ~98% line coverage (649/663 lines), 93 unit tests, warning-free build.** Raised from the
+~40% handover baseline by adding fixture-based deserialization tests for every `Data` model plus
+dedicated tests for the converters, DI extensions, exceptions, the OAuth token provider (error paths,
+expiry tolerance, concurrent refresh) and the back-off handler (429/5xx retry, give-up, User-Agent,
+secret masking). The only remaining uncovered code is the inert `PrimitivesR3BridgeGenerated`
+attribute (a Refit 12 transitive artefact — see the Refit 11-vs-12 open item). **Keep each new
+endpoint's model covered by a deserialization test as Workstream B proceeds.**
+
+Run:
 
 ```sh
 dotnet test Aruba.Api.Test/Aruba.Api.Test.csproj -c Release \
@@ -68,8 +76,8 @@ dotnet test Aruba.Api.Test/Aruba.Api.Test.csproj -c Release \
 - Keep using `MockHttpMessageHandler` for end-to-end-through-Refit tests.
 - Grow the live `Integration` suite with one read-only test per typed area as models land.
 
-**Next action:** raise handler + converter + DI + model-deserialization coverage to ≥ 80%, then keep
-each new endpoint's model covered by a deserialization test as Workstream B proceeds.
+**Next action:** coverage target is met. Proceed to Workstream B (start at B0), adding a
+deserialization test for every model as it is typed to hold coverage at this level.
 
 ---
 
@@ -155,8 +163,9 @@ the model-fixture test habit before the Configuration marathon.
 
 ## Housekeeping / open items at handover
 
-- **NuGet 1.0.7**: CI pushed it and NuGet accepted it, but it had not appeared on the public feed —
-  verify validation status under the NuGet account (Manage Packages) and re-publish if needed.
+- **NuGet publishing**: ✅ resolved. (Earlier tagged versions were pushed but never appeared on the
+  public feed; the `--skip-duplicate` flag was masking a 409 from versions that had failed NuGet's
+  validation pipeline. Fixed by the repo owner.)
 - **Refit 11 vs 12**: decide whether to keep Refit 12 (adds `ReactiveUI.Primitives` transitively,
   needs the `CS0436` suppression) or revert to the leaner 11.0.1.
 - **Codacy skill**: the `codacy` skill in `PanoramicData.Skills` was extended with `add-repo` and

@@ -1,6 +1,6 @@
 # Aruba.Api
 
-[![NuGet](https://img.shields.io/nuget/v/Aruba.Api.svg)](https://www.nuget.org/packages/Aruba.Api)
+[![NuGet](https://img.shields.io/nuget/v/PanoramicData.Aruba.Api.svg)](https://www.nuget.org/packages/PanoramicData.Aruba.Api)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/bb86df3b2bde46a1b30ecf539f9b5744)](https://app.codacy.com/gh/panoramicdata/Aruba.Api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
@@ -14,7 +14,7 @@ It handles OAuth 2.0 authentication, token refresh, transient-error retries and 
 ## Installation
 
 ```sh
-dotnet add package Aruba.Api
+dotnet add package PanoramicData.Aruba.Api
 ```
 
 ## Getting your credentials
@@ -191,7 +191,7 @@ typed surface grows; contributions adding typed models are welcome — see
 
 ## Links
 
-- [NuGet package](https://www.nuget.org/packages/Aruba.Api)
+- [NuGet package](https://www.nuget.org/packages/PanoramicData.Aruba.Api)
 - [GitHub repository](https://github.com/panoramicdata/Aruba.Api)
 - [Issue tracker](https://github.com/panoramicdata/Aruba.Api/issues)
 - [New Central API documentation](https://developer.arubanetworks.com/new-central/docs)

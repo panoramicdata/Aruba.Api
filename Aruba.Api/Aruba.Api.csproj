@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
     <!-- NuGet package metadata -->
-    <PackageId>Aruba.Api</PackageId>
+    <PackageId>PanoramicData.Aruba.Api</PackageId>
     <Owners>Panoramic Data Limited</Owners>
     <PackageProjectUrl>https://github.com/panoramicdata/Aruba.Api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/panoramicdata/Aruba.Api</RepositoryUrl>

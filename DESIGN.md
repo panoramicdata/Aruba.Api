@@ -14,7 +14,7 @@ token refresh, transient-error retries, and read-only safety.
 
 ```
 Aruba.Api/                         # repo root
-├─ Aruba.Api/                      # the shipping library (PackageId: Aruba.Api)
+├─ Aruba.Api/                      # the shipping library (PackageId: PanoramicData.Aruba.Api)
 │  ├─ ArubaCentralClient.cs        # the public entry point; exposes one property per API area
 │  ├─ ArubaCentralClientOptions.cs # immutable options (required init members)
 │  ├─ ArubaCentralClientOptionsBuilder.cs # mutable builder for the DI callback

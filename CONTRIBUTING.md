@@ -13,7 +13,7 @@ Thank you for your interest in contributing to this project!
 
 ## Coding Standards
 
-- All public types and members should have XML documentation comments
+- All public members must have XML documentation comments
 - Use `System.Text.Json` — do not introduce `Newtonsoft.Json`
 - Use Refit for HTTP client interfaces
 - Use file-scoped namespaces
@@ -21,43 +21,11 @@ Thank you for your interest in contributing to this project!
 - Ensure `TreatWarningsAsErrors` remains enabled
 - All code must compile with zero diagnostics
 
-### Adding a new endpoint
-
-1. Add (or extend) the relevant Refit interface under `Aruba.Api/Interfaces/<Area>/`.
-   Group interfaces to mirror the HPE Aruba Networking Central API areas
-   (`network-monitoring`, `network-notifications`, `network-reporting`,
-   `network-services`, `network-troubleshooting`, `network-msp`).
-2. Use `[Get]`, `[Post]`, `[Put]`, `[Patch]`, `[Delete]` with the path relative to
-   the regional API gateway base address. Route parameters use Refit's `{name}`
-   placeholder bound with `[AliasAs("...")]` where the URL segment differs from a
-   legal C# identifier (e.g. `serial-number`).
-3. Add or reuse a strongly-typed model under `Aruba.Api/Data/`. List endpoints
-   return the shared `PagedResponse<T>` envelope (`items`, `count`, `total`, `next`).
-4. Expose the interface as a property on `ArubaCentralClient`.
-5. Add a unit test (mocked) under `Aruba.Api.Test/Unit` and, where useful, a live read-only
-   integration test under `Aruba.Api.Test/Integration`.
-
 ## Testing
 
 - Use xUnit v3 for all tests
 - Use AwesomeAssertions for fluent assertions
-- Tests live in a single project, `Aruba.Api.Test`, split by sub-namespace:
-  - `Aruba.Api.Test.Unit` — fast, fully-mocked, no network
-  - `Aruba.Api.Test.Integration` — live, **read-only** calls against a real New Central tenant
-- **No test ever skips** (`failSkips: true`). Integration tests deliberately *fail* when
-  credentials are missing rather than skipping — a silently-skipped integration test gives a false
-  sense of security. Integration tests construct the client with `IsReadOnly = true`, so they can
-  never mutate the tenant.
-- Provide integration credentials via user-secrets (local) or environment variables (CI) — see
-  `usersecrets.example.json`:
-  ```sh
-  dotnet user-secrets set "Aruba:BaseAddress"  "https://us2.api.central.arubanetworks.com"
-  dotnet user-secrets set "Aruba:ClientId"     "..."
-  dotnet user-secrets set "Aruba:ClientSecret" "..."
-  ```
-  In CI, set the `ARUBA_BASEADDRESS`, `ARUBA_CLIENTID` and `ARUBA_CLIENTSECRET` repository secrets.
-- To run only one tier locally: `dotnet test --filter Category=Integration` (or `Category!=Integration`).
-- Ensure all tests pass before submitting a PR
+- Ensure all existing tests pass before submitting a PR
 
 ## License
 

@@ -1,3 +1,9 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![NuGet version](https://img.shields.io/nuget/v/Aruba.Api.svg)](https://www.nuget.org/packages/Aruba.Api/)
+
+[![Codacy Badge](https://app.codacy.com/project/badge/grade/Aruba.Api)](https://app.codacy.com/gh/panoramicdata/Aruba.Api/dashboard)
+
 # Aruba.Api
 
 [![NuGet](https://img.shields.io/nuget/v/PanoramicData.Aruba.Api.svg)](https://www.nuget.org/packages/PanoramicData.Aruba.Api)

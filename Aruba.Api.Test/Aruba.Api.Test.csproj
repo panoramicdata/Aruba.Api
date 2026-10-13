@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -21,8 +22,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="coverlet.collector" />
-  </ItemGroup>
+  <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" PrivateAssets="all" /></ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aruba.Api\Aruba.Api.csproj" />
   </ItemGroup>

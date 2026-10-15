@@ -5,31 +5,19 @@ namespace Aruba.Api.Data;
 /// </summary>
 public sealed class Switch
 {
-	/// <summary>The device serial number.</summary>
+	/// <summary>The identifiers and labels of the device.</summary>
 	public string? SerialNumber { get; init; }
-
-	/// <summary>The device MAC address.</summary>
 	public string? MacAddress { get; init; }
-
-	/// <summary>The friendly device name.</summary>
 	public string? DeviceName { get; init; }
-
-	/// <summary>The hardware model.</summary>
 	public string? Model { get; init; }
-
-	/// <summary>The manufacturer part number.</summary>
 	public string? PartNumber { get; init; }
 
 	/// <summary>The running firmware version.</summary>
 	public string? FirmwareVersion { get; init; }
 
-	/// <summary>The IPv4 address.</summary>
+	/// <summary>The network addresses of the device.</summary>
 	public string? Ipv4 { get; init; }
-
-	/// <summary>The IPv6 address.</summary>
 	public string? Ipv6 { get; init; }
-
-	/// <summary>The public IP address.</summary>
 	public string? PublicIp { get; init; }
 
 	/// <summary>The connection status.</summary>
@@ -53,25 +41,19 @@ public sealed class Switch
 	/// <summary>The time the device was last seen, when available.</summary>
 	public DateTimeOffset? LastSeenAt { get; init; }
 
-	/// <summary>The identifier of the site the device belongs to.</summary>
+	/// <summary>The site the device belongs to.</summary>
 	public string? SiteId { get; init; }
-
-	/// <summary>The name of the site the device belongs to.</summary>
 	public string? SiteName { get; init; }
 
-	/// <summary>The stack identifier, when the switch is part of a stack.</summary>
+	/// <summary>The stack identifiers, when the switch is part of a stack.</summary>
 	public string? StackId { get; init; }
-
-	/// <summary>The member identifier within the stack.</summary>
 	public int? StackMemberId { get; init; }
 
 	/// <summary>Per-member resource and utilisation trends.</summary>
 	public IReadOnlyList<SwitchTrend> SwitchTrends { get; init; } = [];
 
-	/// <summary>The resource identifier.</summary>
+	/// <summary>The New Central identifiers of the resource.</summary>
 	public string? Id { get; init; }
-
-	/// <summary>The New Central resource type discriminator.</summary>
 	public string? Type { get; init; }
 }
 

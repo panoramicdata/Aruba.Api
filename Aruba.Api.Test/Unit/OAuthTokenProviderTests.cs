@@ -33,7 +33,7 @@ public sealed class OAuthTokenProviderTests
 	[Fact]
 	public async Task GetAccessToken_Success_ReturnsToken()
 	{
-		var (handler, provider) = Setup((_, _) => MockHttpMessageHandler.TokenResponse("abc"));
+		var provider = Setup((_, _) => MockHttpMessageHandler.TokenResponse("abc")).provider;
 		using var _ = provider;
 
 		var token = await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -44,8 +44,8 @@ public sealed class OAuthTokenProviderTests
 	[Fact]
 	public async Task GetAccessToken_NonSuccess_ThrowsWithStatusCode()
 	{
-		var (handler, provider) = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.BadRequest, """{"error":"invalid_client"}"""));
+		var provider = Setup((_, _) =>
+			MockHttpMessageHandler.Json(HttpStatusCode.BadRequest, """{"error":"invalid_client"}""")).provider;
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -57,8 +57,8 @@ public sealed class OAuthTokenProviderTests
 	[Fact]
 	public async Task GetAccessToken_MalformedJson_Throws()
 	{
-		var (handler, provider) = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.OK, "this is not json"));
+		var provider = Setup((_, _) =>
+			MockHttpMessageHandler.Json(HttpStatusCode.OK, "this is not json")).provider;
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -69,8 +69,8 @@ public sealed class OAuthTokenProviderTests
 	[Fact]
 	public async Task GetAccessToken_MissingAccessToken_Throws()
 	{
-		var (handler, provider) = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"token_type":"Bearer","expires_in":3600}"""));
+		var provider = Setup((_, _) =>
+			MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"token_type":"Bearer","expires_in":3600}""")).provider;
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);

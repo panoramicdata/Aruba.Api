@@ -14,10 +14,13 @@ public sealed class ArubaCentralClientTests
 		IsReadOnly = readOnly,
 	};
 
+	private static ArubaCentralClient CreateClient(MockHttpMessageHandler handler, bool readOnly = false)
+		=> new(Options(readOnly), handler);
+
 	[Fact]
 	public void AllApiFacades_AreWiredUp()
 	{
-		using var client = new ArubaCentralClient(Options());
+		using var client = CreateClient(CreateTokenOnlyHandler());
 
 		object?[] facades =
 		[
@@ -47,12 +50,7 @@ public sealed class ArubaCentralClientTests
 	[Fact]
 	public async Task GetAllAsync_DeserialisesPagedResponse()
 	{
-		var handler = new MockHttpMessageHandler((request, _) =>
-			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage));
-
-		using var client = new ArubaCentralClient(Options(), handler);
+		using var client = CreateClient(CreateJsonHandler(TestData.AccessPointsPage));
 
 		var page = await client.AccessPoints.GetAllAsync(new Data.ListQuery { Limit = 100 }, TestContext.Current.CancellationToken);
 
@@ -81,7 +79,7 @@ public sealed class ArubaCentralClientTests
 			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
 		});
 
-		using var client = new ArubaCentralClient(Options(), handler);
+		using var client = CreateClient(handler);
 		await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
 		auth.Should().NotBeNull();
@@ -93,18 +91,9 @@ public sealed class ArubaCentralClientTests
 	public async Task Token_IsCachedAcrossCalls()
 	{
 		var tokenRequests = 0;
-		var handler = new MockHttpMessageHandler((request, _) =>
-		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				tokenRequests++;
-				return MockHttpMessageHandler.TokenResponse();
-			}
+		var handler = CreateTokenCountingHandler((() => tokenRequests, (int v) => tokenRequests = v));
 
-			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		});
-
-		using var client = new ArubaCentralClient(Options(), handler);
+		using var client = CreateClient(handler);
 		await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 		await client.Devices.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
@@ -116,21 +105,9 @@ public sealed class ArubaCentralClientTests
 	{
 		var tokenRequests = 0;
 		var apiCalls = 0;
-		var handler = new MockHttpMessageHandler((request, _) =>
-		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				tokenRequests++;
-				return MockHttpMessageHandler.TokenResponse($"token-{tokenRequests}");
-			}
+		var handler = CreateUnauthorizedHandler((() => tokenRequests, (int v) => tokenRequests = v), (() => apiCalls, (int v) => apiCalls = v));
 
-			apiCalls++;
-			return apiCalls == 1
-				? MockHttpMessageHandler.Json(HttpStatusCode.Unauthorized, "{}")
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		});
-
-		using var client = new ArubaCentralClient(Options(), handler);
+		using var client = CreateClient(handler);
 		var page = await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
 		page.Items.Should().ContainSingle();
@@ -141,12 +118,7 @@ public sealed class ArubaCentralClientTests
 	[Fact]
 	public async Task ReadOnlyMode_BlocksMutatingRequests()
 	{
-		var handler = new MockHttpMessageHandler((request, _) =>
-			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, "{}"));
-
-		using var client = new ArubaCentralClient(Options(readOnly: true), handler);
+		using var client = CreateClient(CreateTokenOnlyHandler(), readOnly: true);
 
 		var act = async () => await client.Devices.DeleteAsync("AP00000001", TestContext.Current.CancellationToken);
 
@@ -156,12 +128,8 @@ public sealed class ArubaCentralClientTests
 	[Fact]
 	public async Task Alerts_EmptyUpdatedAt_DeserialisesAsNull()
 	{
-		var handler = new MockHttpMessageHandler((request, _) =>
-			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AlertsPage));
+		using var client = CreateClient(CreateJsonHandler(TestData.AlertsPage));
 
-		using var client = new ArubaCentralClient(Options(), handler);
 		var page = await client.Alerts.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
 
 		var alert = page.Items.Should().ContainSingle().Subject;
@@ -173,12 +141,8 @@ public sealed class ArubaCentralClientTests
 	[Fact]
 	public async Task AlertAction_ReturnsAsyncAcknowledgement()
 	{
-		var handler = new MockHttpMessageHandler((request, _) =>
-			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AsyncAccepted));
+		using var client = CreateClient(CreateJsonHandler(TestData.AsyncAccepted));
 
-		using var client = new ArubaCentralClient(Options(), handler);
 		var result = await client.Alerts.ClearAsync(
 			new Data.AlertActionRequest { AlertIds = ["1", "2"] },
 			TestContext.Current.CancellationToken);
@@ -186,4 +150,45 @@ public sealed class ArubaCentralClientTests
 		result.TaskId.Should().Be("abc123-def456-ghi789");
 		result.Response.Should().Be("Request accepted");
 	}
+
+	private static MockHttpMessageHandler CreateTokenOnlyHandler()
+		=> new((request, _) =>
+			MockHttpMessageHandler.IsTokenRequest(request)
+				? MockHttpMessageHandler.TokenResponse()
+				: MockHttpMessageHandler.Json(HttpStatusCode.OK, "{}"));
+
+	private static MockHttpMessageHandler CreateJsonHandler(string body)
+		=> new((request, _) =>
+			MockHttpMessageHandler.IsTokenRequest(request)
+				? MockHttpMessageHandler.TokenResponse()
+				: MockHttpMessageHandler.Json(HttpStatusCode.OK, body));
+
+	private static MockHttpMessageHandler CreateTokenCountingHandler((Func<int>, Action<int>) tokenRequests)
+		=> new((request, _) =>
+		{
+			if (MockHttpMessageHandler.IsTokenRequest(request))
+			{
+				tokenRequests.Item2(tokenRequests.Item1() + 1);
+				return MockHttpMessageHandler.TokenResponse();
+			}
+
+			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
+		});
+
+	private static MockHttpMessageHandler CreateUnauthorizedHandler((Func<int>, Action<int>) tokenRequests, (Func<int>, Action<int>) apiCalls)
+		=> new((request, _) =>
+		{
+			if (MockHttpMessageHandler.IsTokenRequest(request))
+			{
+				var nextToken = tokenRequests.Item1() + 1;
+				tokenRequests.Item2(nextToken);
+				return MockHttpMessageHandler.TokenResponse($"token-{nextToken}");
+			}
+
+			var nextApiCall = apiCalls.Item1() + 1;
+			apiCalls.Item2(nextApiCall);
+			return nextApiCall == 1
+				? MockHttpMessageHandler.Json(HttpStatusCode.Unauthorized, "{}")
+				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
+		});
 }

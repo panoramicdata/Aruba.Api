@@ -56,7 +56,10 @@ public interface IGatewayTroubleshooting
 		string serialNumber,
 		CancellationToken cancellationToken = default);
 
-	/// <summary>Disconnects a specific client from the gateway by MAC address.</summary>
+	/// <summary>
+	/// Disconnects a specific client from the gateway by MAC address. <paramref name="request"/>
+	/// carries the MAC address to disconnect.
+	/// </summary>
 	[Post("/network-troubleshooting/v1/gateways/{serialNumber}/disconnectClientByMacAddress")]
 	Task<AsyncOperationResponse> DisconnectClientAsync(
 		string serialNumber,
@@ -70,8 +73,8 @@ public interface IGatewayTroubleshooting
 		CancellationToken cancellationToken = default);
 
 	/// <summary>
-	/// Gets the result of a previously started command. <paramref name="command"/> is the command
-	/// segment (for example <c>ping</c>, <c>pingSweep</c>, <c>traceroute</c> or <c>iperf</c>).
+	/// Gets the result of a previously started command (for example <c>ping</c>,
+	/// <c>pingSweep</c>, <c>traceroute</c> or <c>iperf</c>).
 	/// </summary>
 	[Get("/network-troubleshooting/v1/gateways/{serialNumber}/{command}/async-operations/{taskId}")]
 	Task<TroubleshootingTask> GetCommandResultAsync(

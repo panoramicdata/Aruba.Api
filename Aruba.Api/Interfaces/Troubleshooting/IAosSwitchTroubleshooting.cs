@@ -12,42 +12,15 @@ namespace Aruba.Api.Interfaces.Troubleshooting;
 public interface IAosSwitchTroubleshooting
 {
 	/// <summary>
-	/// Starts a ping from the switch. The payload must list the destinations to probe;
-	/// follow up with <see cref="GetCommandResultAsync"/> to collect the replies.
+	/// Starts a troubleshooting command on the switch. The <paramref name="commandName"/>
+	/// selects the endpoint — one of <c>ping</c>, <c>traceroute</c>, <c>poeBounce</c>,
+	/// <c>portBounce</c> or <c>cableTest</c>. The payload must describe what to probe or bounce;
+	/// follow up with <see cref="GetCommandResultAsync"/> using the same name to collect the result.
 	/// </summary>
-	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/ping")]
-	Task<AsyncOperationResponse> PingAsync(
+	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/{commandName}")]
+	Task<AsyncOperationResponse> ExecuteCommandAsync(
 		string serialNumber,
-		[Body] TroubleshootingCommandRequest command,
-		CancellationToken cancellationToken = default);
-
-	/// <summary>
-	/// Traces the network path to a target, reporting each hop along the way.
-	/// </summary>
-	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/traceroute")]
-	Task<AsyncOperationResponse> TracerouteAsync(
-		string serialNumber,
-		[Body] TroubleshootingCommandRequest command,
-		CancellationToken cancellationToken = default);
-
-	/// <summary>Bounces PoE on a port.</summary>
-	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/poeBounce")]
-	Task<AsyncOperationResponse> PoeBounceAsync(
-		string serialNumber,
-		[Body] TroubleshootingCommandRequest command,
-		CancellationToken cancellationToken = default);
-
-	/// <summary>Bounces a port (administratively down then up).</summary>
-	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/portBounce")]
-	Task<AsyncOperationResponse> PortBounceAsync(
-		string serialNumber,
-		[Body] TroubleshootingCommandRequest command,
-		CancellationToken cancellationToken = default);
-
-	/// <summary>Verifies the physical integrity of the cable attached to a port.</summary>
-	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/cableTest")]
-	Task<AsyncOperationResponse> CableTestAsync(
-		string serialNumber,
+		string commandName,
 		[Body] TroubleshootingCommandRequest command,
 		CancellationToken cancellationToken = default);
 

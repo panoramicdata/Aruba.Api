@@ -40,22 +40,23 @@ public sealed class BackoffHandlerTests
 		return response;
 	}
 
+	/// <summary>Answers token requests; otherwise hands the API call to <paramref name="api"/>.</summary>
+	private static Func<HttpRequestMessage, int, HttpResponseMessage> TokenThenApi(Func<HttpRequestMessage, int, HttpResponseMessage> api)
+		=> (request, _) => MockHttpMessageHandler.IsTokenRequest(request)
+			? MockHttpMessageHandler.TokenResponse()
+			: api(request, _);
+
 	[Fact]
 	public async Task Retries_429_ThenSucceeds()
 	{
 		var apiCalls = 0;
-		var handler = new MockHttpMessageHandler((request, _) =>
+		var handler = new MockHttpMessageHandler(TokenThenApi((_, _) =>
 		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				return MockHttpMessageHandler.TokenResponse();
-			}
-
 			apiCalls++;
 			return apiCalls == 1
 				? StatusJson(HttpStatusCode.TooManyRequests, retryAfter: "0")
 				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		});
+		}));
 
 		using var client = new ArubaCentralClient(Options(), handler);
 		var page = await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
@@ -68,18 +69,13 @@ public sealed class BackoffHandlerTests
 	public async Task Retries_503_ThenSucceeds()
 	{
 		var apiCalls = 0;
-		var handler = new MockHttpMessageHandler((request, _) =>
+		var handler = new MockHttpMessageHandler(TokenThenApi((_, _) =>
 		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				return MockHttpMessageHandler.TokenResponse();
-			}
-
 			apiCalls++;
 			return apiCalls == 1
 				? StatusJson(HttpStatusCode.ServiceUnavailable)
 				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		});
+		}));
 
 		using var client = new ArubaCentralClient(Options(), handler);
 		var page = await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
@@ -92,16 +88,11 @@ public sealed class BackoffHandlerTests
 	public async Task GivesUp_After_MaxAttempts()
 	{
 		var apiCalls = 0;
-		var handler = new MockHttpMessageHandler((request, _) =>
+		var handler = new MockHttpMessageHandler(TokenThenApi((_, _) =>
 		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				return MockHttpMessageHandler.TokenResponse();
-			}
-
 			apiCalls++;
 			return StatusJson(HttpStatusCode.ServiceUnavailable);
-		});
+		}));
 
 		using var client = new ArubaCentralClient(Options(maxAttempts: 2), handler);
 
@@ -116,16 +107,11 @@ public sealed class BackoffHandlerTests
 	public async Task Adds_UserAgent_Header()
 	{
 		string? userAgent = null;
-		var handler = new MockHttpMessageHandler((request, _) =>
+		var handler = new MockHttpMessageHandler(TokenThenApi((request, _) =>
 		{
-			if (MockHttpMessageHandler.IsTokenRequest(request))
-			{
-				return MockHttpMessageHandler.TokenResponse();
-			}
-
 			userAgent = request.Headers.UserAgent.ToString();
 			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		});
+		}));
 
 		using var client = new ArubaCentralClient(Options(), handler);
 		await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
@@ -137,10 +123,8 @@ public sealed class BackoffHandlerTests
 	public async Task Debug_Logging_Includes_Request_Body_For_Mutations()
 	{
 		var logger = new CapturingLogger();
-		var handler = new MockHttpMessageHandler((request, _) =>
-			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"id":"AP1","deviceName":"renamed"}"""));
+		var handler = new MockHttpMessageHandler(TokenThenApi((_, _) =>
+			MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"id":"AP1","deviceName":"renamed"}""")));
 
 		using var client = new ArubaCentralClient(Options(logger: logger), handler);
 		await client.Devices.UpdateAsync(

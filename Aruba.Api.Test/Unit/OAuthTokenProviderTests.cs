@@ -16,24 +16,15 @@ public sealed class OAuthTokenProviderTests
 		TokenExpiryToleranceSeconds = tolerance,
 	};
 
-	private static OAuthTokenProvider CreateProvider(
-		MockHttpMessageHandler handler,
-		ArubaCentralClientOptions? options = null)
-		=> new(options ?? Options(30), new HttpClient(handler));
-
-	private static (MockHttpMessageHandler handler, OAuthTokenProvider provider) Setup(
+	private static OAuthTokenProvider Setup(
 		Func<HttpRequestMessage, int, HttpResponseMessage> responder,
 		ArubaCentralClientOptions? options = null)
-	{
-		var handler = new MockHttpMessageHandler(responder);
-		var provider = CreateProvider(handler, options);
-		return (handler, provider);
-	}
+		=> new(options ?? Options(30), new HttpClient(new MockHttpMessageHandler(responder)));
 
 	[Fact]
 	public async Task GetAccessToken_Success_ReturnsToken()
 	{
-		var provider = Setup((_, _) => MockHttpMessageHandler.TokenResponse("abc")).provider;
+		var provider = Setup((_, _) => MockHttpMessageHandler.TokenResponse("abc"));
 		using var _ = provider;
 
 		var token = await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -45,7 +36,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_NonSuccess_ThrowsWithStatusCode()
 	{
 		var provider = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.BadRequest, """{"error":"invalid_client"}""")).provider;
+			MockHttpMessageHandler.Json(HttpStatusCode.BadRequest, """{"error":"invalid_client"}"""));
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -58,7 +49,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_MalformedJson_Throws()
 	{
 		var provider = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.OK, "this is not json")).provider;
+			MockHttpMessageHandler.Json(HttpStatusCode.OK, "this is not json"));
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -70,7 +61,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_MissingAccessToken_Throws()
 	{
 		var provider = Setup((_, _) =>
-			MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"token_type":"Bearer","expires_in":3600}""")).provider;
+			MockHttpMessageHandler.Json(HttpStatusCode.OK, """{"token_type":"Bearer","expires_in":3600}"""));
 		using var _ = provider;
 
 		var act = async () => await provider.GetAccessTokenAsync(false, TestContext.Current.CancellationToken);
@@ -82,7 +73,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_CachesTokenAcrossCalls()
 	{
 		var requests = 0;
-		var (handler, provider) = Setup((_, _) =>
+		var provider = Setup((_, _) =>
 		{
 			requests++;
 			return MockHttpMessageHandler.TokenResponse();
@@ -99,7 +90,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_ForceRefresh_AlwaysRequestsNewToken()
 	{
 		var requests = 0;
-		var (handler, provider) = Setup((_, _) =>
+		var provider = Setup((_, _) =>
 		{
 			requests++;
 			return MockHttpMessageHandler.TokenResponse($"token-{requests}");
@@ -117,7 +108,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_ExpiryTolerance_ForcesEarlyRefresh()
 	{
 		var requests = 0;
-		var (handler, provider) = Setup((_, _) =>
+		var provider = Setup((_, _) =>
 		{
 			requests++;
 			// expires_in (10s) is smaller than the tolerance (30s), so the token is treated as
@@ -136,7 +127,7 @@ public sealed class OAuthTokenProviderTests
 	public async Task GetAccessToken_ConcurrentCallers_ShareOneRefresh()
 	{
 		var requests = 0;
-		var (handler, provider) = Setup((_, _) =>
+		var provider = Setup((_, _) =>
 		{
 			Interlocked.Increment(ref requests);
 			return MockHttpMessageHandler.TokenResponse();

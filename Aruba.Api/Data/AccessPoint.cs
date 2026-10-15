@@ -2,6 +2,8 @@ namespace Aruba.Api.Data;
 
 /// <summary>
 /// An access point as reported by the New Central network-monitoring service.
+/// The device fields are shared with the generic <see cref="Device"/> resource;
+/// the cluster, reboot, utilisation and location fields are access-point specific.
 /// </summary>
 public sealed class AccessPoint
 {

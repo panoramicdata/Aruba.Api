@@ -26,34 +26,23 @@ public interface IAosSwitchTroubleshooting
 
 	/// <summary>Runs one or more show commands on the switch.</summary>
 	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/showCommands")]
-	Task<AsyncOperationResponse> ShowCommandsAsync(
-		string serialNumber,
-		[Body] ShowCommandsRequest command,
-		CancellationToken cancellationToken = default);
+	Task<AsyncOperationResponse> ShowCommandsAsync(string serialNumber, [Body] ShowCommandsRequest command, CancellationToken cancellationToken = default);
 
 	/// <summary>Gets the list of show commands supported by the switch.</summary>
 	[Get("/network-troubleshooting/v1/aos-s/{serialNumber}/show-commands")]
-	Task<PagedResponse<string>> GetSupportedShowCommandsAsync(
-		string serialNumber,
-		CancellationToken cancellationToken = default);
+	Task<PagedResponse<string>> GetSupportedShowCommandsAsync(string serialNumber, CancellationToken cancellationToken = default);
 
 	/// <summary>Reboots the switch.</summary>
 	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/reboot")]
-	Task<AsyncOperationResponse> RebootAsync(
-		string serialNumber,
-		CancellationToken cancellationToken = default);
+	Task<AsyncOperationResponse> RebootAsync(string serialNumber, CancellationToken cancellationToken = default);
 
 	/// <summary>Flashes the switch's locator LED.</summary>
 	[Post("/network-troubleshooting/v1/aos-s/{serialNumber}/locate")]
-	Task<AsyncOperationResponse> LocateAsync(
-		string serialNumber,
-		CancellationToken cancellationToken = default);
+	Task<AsyncOperationResponse> LocateAsync(string serialNumber, CancellationToken cancellationToken = default);
 
 	/// <summary>Lists the recent troubleshooting tasks for the switch.</summary>
 	[Get("/network-troubleshooting/v1/aos-s/{serialNumber}/list-tasks")]
-	Task<PagedResponse<TroubleshootingTaskSummary>> ListTasksAsync(
-		string serialNumber,
-		CancellationToken cancellationToken = default);
+	Task<PagedResponse<TroubleshootingTaskSummary>> ListTasksAsync(string serialNumber, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Retrieves the outcome of a command that was previously started (for instance

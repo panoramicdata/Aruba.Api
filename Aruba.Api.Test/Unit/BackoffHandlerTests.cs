@@ -46,6 +46,15 @@ public sealed class BackoffHandlerTests
 			? MockHttpMessageHandler.TokenResponse()
 			: api(request, _);
 
+	private static async Task<Data.PagedResponse<Data.AccessPoint>> GetAllAsync(
+		MockHttpMessageHandler handler,
+		int maxAttempts = 5,
+		Microsoft.Extensions.Logging.ILogger? logger = null)
+	{
+		using var client = new ArubaCentralClient(Options(maxAttempts, logger), handler);
+		return await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
+	}
+
 	[Fact]
 	public async Task Retries_429_ThenSucceeds()
 	{
@@ -58,8 +67,7 @@ public sealed class BackoffHandlerTests
 				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
 		}));
 
-		using var client = new ArubaCentralClient(Options(), handler);
-		var page = await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
+		var page = await GetAllAsync(handler);
 
 		page.Items.Should().ContainSingle();
 		apiCalls.Should().Be(2, "the 429 should be retried once");
@@ -77,8 +85,7 @@ public sealed class BackoffHandlerTests
 				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
 		}));
 
-		using var client = new ArubaCentralClient(Options(), handler);
-		var page = await client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken);
+		var page = await GetAllAsync(handler);
 
 		page.Items.Should().ContainSingle();
 		apiCalls.Should().Be(2, "a 5xx should be retried");
@@ -94,13 +101,17 @@ public sealed class BackoffHandlerTests
 			return StatusJson(HttpStatusCode.ServiceUnavailable);
 		}));
 
-		using var client = new ArubaCentralClient(Options(maxAttempts: 2), handler);
-
-		var ex = await Record.ExceptionAsync(
-			() => client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken));
+		var ex = await GivesUp(handler, maxAttempts: 2);
 
 		ex.Should().NotBeNull("the request never succeeds");
 		apiCalls.Should().Be(2, "it should stop after MaxAttemptCount attempts");
+	}
+
+	private static async ValueTask<Exception?> GivesUp(MockHttpMessageHandler handler, int maxAttempts)
+	{
+		using var client = new ArubaCentralClient(Options(maxAttempts), handler);
+		return await Record.ExceptionAsync(
+			() => client.AccessPoints.GetAllAsync(cancellationToken: TestContext.Current.CancellationToken));
 	}
 
 	[Fact]

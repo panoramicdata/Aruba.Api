@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace Aruba.Api.Test.Unit;
@@ -76,7 +77,7 @@ public sealed class ArubaCentralClientTests
 			}
 
 			auth = request.Headers.Authorization;
-			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
+			return JsonResponse(TestData.AccessPointsPage);
 		});
 
 		using var client = CreateClient(handler);
@@ -151,17 +152,26 @@ public sealed class ArubaCentralClientTests
 		result.Response.Should().Be("Request accepted");
 	}
 
+	private static HttpResponseMessage JsonResponse(string body)
+		=> MockHttpMessageHandler.Json(HttpStatusCode.OK, body);
+
+	private static HttpResponseMessage JsonResponse(HttpStatusCode statusCode, string body)
+		=> MockHttpMessageHandler.Json(statusCode, body);
+
+	private static HttpResponseMessage TokenResponse(string accessToken = "test-token")
+		=> MockHttpMessageHandler.TokenResponse(accessToken);
+
 	private static MockHttpMessageHandler CreateTokenOnlyHandler()
 		=> new((request, _) =>
 			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, "{}"));
+				? TokenResponse()
+				: JsonResponse("{}"));
 
 	private static MockHttpMessageHandler CreateJsonHandler(string body)
 		=> new((request, _) =>
 			MockHttpMessageHandler.IsTokenRequest(request)
-				? MockHttpMessageHandler.TokenResponse()
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, body));
+				? TokenResponse()
+				: JsonResponse(body));
 
 	private static MockHttpMessageHandler CreateTokenCountingHandler((Func<int>, Action<int>) tokenRequests)
 		=> new((request, _) =>
@@ -169,10 +179,10 @@ public sealed class ArubaCentralClientTests
 			if (MockHttpMessageHandler.IsTokenRequest(request))
 			{
 				tokenRequests.Item2(tokenRequests.Item1() + 1);
-				return MockHttpMessageHandler.TokenResponse();
+				return TokenResponse();
 			}
 
-			return MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
+			return JsonResponse(TestData.AccessPointsPage);
 		});
 
 	private static MockHttpMessageHandler CreateUnauthorizedHandler((Func<int>, Action<int>) tokenRequests, (Func<int>, Action<int>) apiCalls)
@@ -182,13 +192,13 @@ public sealed class ArubaCentralClientTests
 			{
 				var nextToken = tokenRequests.Item1() + 1;
 				tokenRequests.Item2(nextToken);
-				return MockHttpMessageHandler.TokenResponse($"token-{nextToken}");
+				return TokenResponse($"token-{nextToken}");
 			}
 
 			var nextApiCall = apiCalls.Item1() + 1;
 			apiCalls.Item2(nextApiCall);
 			return nextApiCall == 1
-				? MockHttpMessageHandler.Json(HttpStatusCode.Unauthorized, "{}")
-				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
+				? JsonResponse(HttpStatusCode.Unauthorized, "{}")
+				: JsonResponse(TestData.AccessPointsPage);
 		});
 }

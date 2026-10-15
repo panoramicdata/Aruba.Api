@@ -31,3 +31,14 @@ We follow a coordinated disclosure process. We ask that you:
 3. Do not disclose the issue publicly until we have released a fix
 
 Thank you for helping keep our software and users safe.
+
+## Notes on hard-coded network endpoints
+
+This repository intentionally contains hard-coded network endpoints, and they are reviewed:
+
+- **API and SSO endpoints** (`https://us2.api.central.arubanetworks.com`, `https://eu1.api.central.arubanetworks.com`, …, `https://sso.common.cloud.hpe.com/…`) in `Aruba.Api/ArubaCentralClusters.cs` and `Aruba.Api/ArubaCentralClientOptions.cs` are the official, public HPE Aruba Networking Central regional gateway and HPE GreenLake SSO hosts, as documented by HPE. They are DNS names (not raw IP literals), and all traffic uses **TLS**. These are the only endpoints the client talks to, and customers can override `BaseAddress` and `TokenEndpoint` with their own values.
+- **`8.8.8.8` (Google Public DNS)** appears only in the **documentation examples** in `README.md` and as a value accepted by the generic `TroubleshootingCommandRequest.Host` field. It is not used by the library at runtime: the client never issues a ping itself. When a caller runs an Aruba AP "ping" troubleshooting command, the **on-premise access point** performs the ping to a host that the caller chooses; `8.8.8.8` in the README is a neutral, well-known example host (publicly reachable DNS) that is safe to ping and does not reveal anything about the caller or the tenant. Using it in a troubleshooting example is equivalent to HPE's own Aruba Central UI, which offers "8.8.8.8" as a common ping target.
+- **Test credentials** are never committed: `Aruba.Api.Test/usersecrets.example.json` is a template with placeholder values (`your-new-central-client-id` / `your-new-central-client-secret`), and real credentials are read from .NET user-secrets or environment variables at test time.
+
+If any of these endpoints ever change, or a new raw IP literal is introduced, review it against
+the guidance above before merging.

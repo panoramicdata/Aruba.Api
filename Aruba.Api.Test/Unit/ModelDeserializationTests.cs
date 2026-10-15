@@ -337,13 +337,13 @@ public sealed class ModelDeserializationTests
 	public void TroubleshootingCommandRequest_Deserializes()
 	{
 		const string json = """
-		{ "host": "8.8.8.8", "count": 4, "packetSize": 64, "port": 443, "interface": "1/1/1",
+		{ "host": "192.0.2.1", "count": 4, "packetSize": 64, "port": 443, "interface": "1/1/1",
 		  "vlanId": "10", "arguments": { "flag": "on" } }
 		""";
 
 		var request = TestSupport.Deserialize<TroubleshootingCommandRequest>(json);
 
-		request.Host.Should().Be("8.8.8.8");
+		request.Host.Should().Be("192.0.2.1");
 		request.Count.Should().Be(4);
 		request.Arguments.Should().ContainKey("flag");
 	}

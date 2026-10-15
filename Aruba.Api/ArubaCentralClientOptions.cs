@@ -83,19 +83,20 @@ public class ArubaCentralClientOptions
 			throw new ArgumentException($"{nameof(BaseAddress)} is required.", nameof(BaseAddress));
 		}
 
-		if (string.IsNullOrWhiteSpace(ClientId))
-		{
-			throw new ArgumentException($"{nameof(ClientId)} is required.", nameof(ClientId));
-		}
-
-		if (string.IsNullOrWhiteSpace(ClientSecret))
-		{
-			throw new ArgumentException($"{nameof(ClientSecret)} is required.", nameof(ClientSecret));
-		}
+		RequireNonWhiteSpace(ClientId, nameof(ClientId));
+		RequireNonWhiteSpace(ClientSecret, nameof(ClientSecret));
 
 		if (MaxAttemptCount < 1)
 		{
 			throw new ArgumentException($"{nameof(MaxAttemptCount)} must be at least 1.", nameof(MaxAttemptCount));
+		}
+	}
+
+	private static void RequireNonWhiteSpace(string? value, string name)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			throw new ArgumentException($"{name} is required.", name);
 		}
 	}
 }

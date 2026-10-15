@@ -11,25 +11,17 @@ namespace Aruba.Api.Interfaces.Troubleshooting;
 /// </remarks>
 public interface ICxSwitchTroubleshooting
 {
-	/// <summary>Starts a ping from the switch.</summary>
-	[Post("/network-troubleshooting/v1/cx/{serialNumber}/ping")]
-	Task<AsyncOperationResponse> PingAsync(string serialNumber, [Body] TroubleshootingCommandRequest request, CancellationToken cancellationToken = default);
-
-	/// <summary>Starts a traceroute from the switch.</summary>
-	[Post("/network-troubleshooting/v1/cx/{serialNumber}/traceroute")]
-	Task<AsyncOperationResponse> TracerouteAsync(string serialNumber, [Body] TroubleshootingCommandRequest request, CancellationToken cancellationToken = default);
-
-	/// <summary>Bounces PoE on a port.</summary>
-	[Post("/network-troubleshooting/v1/cx/{serialNumber}/poeBounce")]
-	Task<AsyncOperationResponse> PoeBounceAsync(string serialNumber, [Body] TroubleshootingCommandRequest request, CancellationToken cancellationToken = default);
-
-	/// <summary>Bounces a port (administratively down then up).</summary>
-	[Post("/network-troubleshooting/v1/cx/{serialNumber}/portBounce")]
-	Task<AsyncOperationResponse> PortBounceAsync(string serialNumber, [Body] TroubleshootingCommandRequest request, CancellationToken cancellationToken = default);
-
-	/// <summary>Runs a cable test on a port.</summary>
-	[Post("/network-troubleshooting/v1/cx/{serialNumber}/cableTest")]
-	Task<AsyncOperationResponse> CableTestAsync(string serialNumber, [Body] TroubleshootingCommandRequest request, CancellationToken cancellationToken = default);
+	/// <summary>
+	/// Runs a troubleshooting command on the switch. <paramref name="command"/> names the command
+	/// to run — <c>ping</c>, <c>traceroute</c>, <c>poeBounce</c>, <c>portBounce</c> or
+	/// <c>cableTest</c> — and <paramref name="request"/> carries that command's parameters.
+	/// </summary>
+	[Post("/network-troubleshooting/v1/cx/{serialNumber}/{command}")]
+	Task<AsyncOperationResponse> CommandAsync(
+		string serialNumber,
+		[Body] TroubleshootingCommandRequest request,
+		string command,
+		CancellationToken cancellationToken = default);
 
 	/// <summary>Runs one or more show commands on the switch.</summary>
 	[Post("/network-troubleshooting/v1/cx/{serialNumber}/showCommands")]

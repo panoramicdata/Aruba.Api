@@ -46,6 +46,9 @@ public sealed class BackoffHandlerTests
 			? MockHttpMessageHandler.TokenResponse()
 			: api(request, _);
 
+	private static MockHttpMessageHandler Handler(Func<HttpRequestMessage, int, HttpResponseMessage> api)
+		=> new(TokenThenApi(api));
+
 	private static async Task<Data.PagedResponse<Data.AccessPoint>> GetAllAsync(
 		MockHttpMessageHandler handler,
 		int maxAttempts = 5,
@@ -59,13 +62,13 @@ public sealed class BackoffHandlerTests
 	public async Task Retries_429_ThenSucceeds()
 	{
 		var apiCalls = 0;
-		var handler = new MockHttpMessageHandler(TokenThenApi((_, _) =>
+		var handler = Handler((_, _) =>
 		{
 			apiCalls++;
 			return apiCalls == 1
 				? StatusJson(HttpStatusCode.TooManyRequests, retryAfter: "0")
 				: MockHttpMessageHandler.Json(HttpStatusCode.OK, TestData.AccessPointsPage);
-		}));
+		});
 
 		var page = await GetAllAsync(handler);
 

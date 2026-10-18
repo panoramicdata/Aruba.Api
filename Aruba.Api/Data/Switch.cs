@@ -50,15 +50,27 @@ public sealed class Switch
 /// </summary>
 public sealed class SwitchTrend
 {
-	public double? CpuUtilization { get; init; }
-	public double? MemoryUtilization { get; init; }
-	public double? PoeAvailable { get; init; }
-	public double? PoeConsumption { get; init; }
-	public double? PowerConsumption { get; init; }
+	/// <summary>The serial number of the switch.</summary>
 	public string? Serial { get; init; }
+	/// <summary>The role of the switch.</summary>
 	public string? SwitchRole { get; init; }
-	public double? SystemTemperature { get; init; }
-	public double? TotalPowerConsumption { get; init; }
+	/// <summary>The uplink ports.</summary>
 	public string? UpLinkPorts { get; init; }
+
+	/// <summary>CPU utilization percentage.</summary>
+	public double? CpuUtilization { get; init; }
+	/// <summary>Memory utilization percentage.</summary>
+	public double? MemoryUtilization { get; init; }
+	/// <summary>PoE power available (watts).</summary>
+	public double? PoeAvailable { get; init; }
+	/// <summary>PoE power consumed (watts).</summary>
+	public double? PoeConsumption { get; init; }
+	/// <summary>Total power consumption (watts).</summary>
+	public double? PowerConsumption { get; init; }
+	/// <summary>System temperature (°C).</summary>
+	public double? SystemTemperature { get; init; }
+	/// <summary>Total power consumption including PoE (watts).</summary>
+	public double? TotalPowerConsumption { get; init; }
+	/// <summary>Generic usage metric.</summary>
 	public double? Usage { get; init; }
 }

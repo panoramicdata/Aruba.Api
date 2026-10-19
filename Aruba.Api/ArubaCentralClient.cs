@@ -92,10 +92,7 @@ public sealed class ArubaCentralClient : IDisposable
 		Firmware = RestService.For<IFirmware>(_httpClient, refitSettings);
 
 		// Troubleshooting
-		AccessPointTroubleshooting = RestService.For<IAccessPointTroubleshooting>(_httpClient, refitSettings);
-		CxSwitchTroubleshooting = RestService.For<ICxSwitchTroubleshooting>(_httpClient, refitSettings);
-		AosSwitchTroubleshooting = RestService.For<IAosSwitchTroubleshooting>(_httpClient, refitSettings);
-		GatewayTroubleshooting = RestService.For<IGatewayTroubleshooting>(_httpClient, refitSettings);
+		Troubleshooting = RestService.For<ITroubleshooting>(_httpClient, refitSettings);
 		Events = RestService.For<IEvents>(_httpClient, refitSettings);
 
 		// MSP
@@ -147,17 +144,8 @@ public sealed class ArubaCentralClient : IDisposable
 	/// <summary>Firmware information.</summary>
 	public IFirmware Firmware { get; }
 
-	/// <summary>Live troubleshooting commands for access points.</summary>
-	public IAccessPointTroubleshooting AccessPointTroubleshooting { get; }
-
-	/// <summary>Live troubleshooting commands for AOS-CX switches.</summary>
-	public ICxSwitchTroubleshooting CxSwitchTroubleshooting { get; }
-
-	/// <summary>Live troubleshooting commands for AOS-S switches.</summary>
-	public IAosSwitchTroubleshooting AosSwitchTroubleshooting { get; }
-
-	/// <summary>Live troubleshooting commands for gateways.</summary>
-	public IGatewayTroubleshooting GatewayTroubleshooting { get; }
+	/// <summary>Live troubleshooting for access points, switches and gateways; the target chooses which.</summary>
+	public ITroubleshooting Troubleshooting { get; }
 
 	/// <summary>Network events.</summary>
 	public IEvents Events { get; }

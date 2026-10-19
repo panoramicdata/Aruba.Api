@@ -39,8 +39,7 @@ Aruba.Api/                         # repo root
 │  │  ├─ Notifications/ (IAlerts, IInsights)
 │  │  ├─ Reporting/     (IReports)
 │  │  ├─ Services/      (IWebhooks, IFirmware)
-│  │  ├─ Troubleshooting/ (IAccessPointTroubleshooting, ICxSwitchTroubleshooting,
-│  │  │                    IAosSwitchTroubleshooting, IGatewayTroubleshooting, IEvents)
+│  │  ├─ Troubleshooting/ (ITroubleshooting - one interface for every device kind, IEvents)
 │  │  └─ Msp/           (IMspTenants)
 │  └─ Data/                        # request/response models (System.Text.Json, camelCase)
 ├─ Aruba.Api.Test/                 # single test project, split by sub-namespace

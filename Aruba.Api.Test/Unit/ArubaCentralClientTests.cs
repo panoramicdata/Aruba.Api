@@ -28,8 +28,7 @@ public sealed class ArubaCentralClientTests
 			client.AccessPoints, client.Devices, client.Clients, client.Switches, client.Gateways,
 			client.SiteHealth, client.Topology, client.ApplicationVisibility, client.FirewallSessions,
 			client.ClientOnboarding, client.Alerts, client.Insights, client.Reports, client.Webhooks,
-			client.Firmware, client.AccessPointTroubleshooting, client.CxSwitchTroubleshooting,
-			client.AosSwitchTroubleshooting, client.GatewayTroubleshooting, client.Events, client.MspTenants,
+			client.Firmware, client.Troubleshooting, client.Events, client.MspTenants,
 		];
 
 		facades.Should().OnlyContain(f => f != null);

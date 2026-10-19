@@ -3,46 +3,28 @@ namespace Aruba.Api.Data;
 /// <summary>
 /// A switch as reported by the New Central network-monitoring service.
 /// </summary>
-public sealed class Switch
+public sealed class Switch : ManagedDevice
 {
-	/// <summary>The identifiers and labels of the device.</summary>
-	public string? SerialNumber { get; init; }
-	public string? MacAddress { get; init; }
-	public string? DeviceName { get; init; }
-	public string? Model { get; init; }
-	public string? PartNumber { get; init; }
-
-	/// <summary>The running firmware version.</summary>
-	public string? FirmwareVersion { get; init; }
-
-	/// <summary>The network addresses of the device.</summary>
-	public string? Ipv4 { get; init; }
-	public string? Ipv6 { get; init; }
+	/// <summary>The public IP address.</summary>
 	public string? PublicIp { get; init; }
 
-	/// <summary>The connection status.</summary>
-	public string? Status { get; init; }
+	/// <summary>The switch role.</summary>
 	public string? SwitchRole { get; init; }
-	public string? Deployment { get; init; }
-	public string? DeviceFunction { get; init; }
+
+	/// <summary>The switch type.</summary>
 	public string? SwitchType { get; init; }
+
+	/// <summary>How long the switch has been up, in milliseconds.</summary>
 	public long? UptimeInMillis { get; init; }
-	public DateTimeOffset? LastSeenAt { get; init; }
 
-	/// <summary>The site the device belongs to.</summary>
-	public string? SiteId { get; init; }
-	public string? SiteName { get; init; }
-
-	/// <summary>The stack identifiers, when the switch is part of a stack.</summary>
+	/// <summary>The stack identifier, when the switch is part of a stack.</summary>
 	public string? StackId { get; init; }
+
+	/// <summary>The member number within the stack.</summary>
 	public int? StackMemberId { get; init; }
 
 	/// <summary>Per-member resource and utilisation trends.</summary>
 	public IReadOnlyList<SwitchTrend> SwitchTrends { get; init; } = [];
-
-	/// <summary>The New Central identifiers of the resource.</summary>
-	public string? Id { get; init; }
-	public string? Type { get; init; }
 }
 
 /// <summary>
@@ -73,4 +55,4 @@ public sealed class SwitchTrend
 	public double? TotalPowerConsumption { get; init; }
 	/// <summary>Generic usage metric.</summary>
 	public double? Usage { get; init; }
-}
+}

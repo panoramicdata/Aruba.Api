@@ -12,7 +12,7 @@ Read this page before upgrading from 1.1.x.
 | Area | 1.1 | 1.2 | Breaking? |
 |---|---|---|---|
 | Troubleshooting | Four properties on `ArubaCentralClient`, one interface each | One property, `Troubleshooting`, and a `TroubleshootingTarget` argument | **Yes** |
-| Troubleshooting commands | Magic strings, and a different method name per interface | `TroubleshootingCommands` constants and one `CommandAsync` | **Yes** |
+| Troubleshooting commands | Magic strings, and a different method name per interface | `TroubleshootingCommands` names and one `CommandAsync` | **Yes** |
 | Device models | `Device`, `AccessPoint`, `Switch` and `Gateway` each declared the same properties | Shared properties live on `DeviceBase` and `ManagedDevice` | No |
 
 ## Why
@@ -68,7 +68,7 @@ Two things to watch for beyond the extra argument:
 The commands are still plain strings on the wire. `TroubleshootingCommands` gives them names so they are not typed
 by hand:
 
-| Constant | Value | Applies to |
+| Name | Value | Applies to |
 |---|---|---|
 | `Ping` | `ping` | all |
 | `Traceroute` | `traceroute` | all |

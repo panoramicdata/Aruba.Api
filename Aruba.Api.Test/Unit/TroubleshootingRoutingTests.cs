@@ -62,7 +62,7 @@ public sealed class TroubleshootingRoutingTests
 		Api(handler).Method.Should().Be(HttpMethod.Post);
 		Api(handler).RequestUri!.AbsolutePath.Should().Be($"{prefix}/showCommands");
 
-		await client.Troubleshooting.CommandAsync(target, "SN1", TroubleshootingCommands.Ping, new TroubleshootingCommandRequest { Host = "8.8.8.8" }, token);
+		await client.Troubleshooting.CommandAsync(target, "SN1", TroubleshootingCommands.Ping, new TroubleshootingCommandRequest { Host = "probe.example" }, token);
 		Api(handler).Method.Should().Be(HttpMethod.Post);
 		Api(handler).RequestUri!.AbsolutePath.Should().Be($"{prefix}/ping");
 
@@ -88,8 +88,8 @@ public sealed class TroubleshootingRoutingTests
 	public void CommandNames_AreDistinct()
 	{
 		var names = typeof(TroubleshootingCommands)
-			.GetFields()
-			.Select(field => (string)field.GetRawConstantValue()!)
+			.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+			.Select(property => (string)property.GetValue(null)!)
 			.ToList();
 
 		names.Should().OnlyHaveUniqueItems().And.HaveCount(11);

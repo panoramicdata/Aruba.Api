@@ -33,10 +33,10 @@ public sealed class DeviceBaseTests
 	[Fact]
 	public void Gateway_ReadsTheSharedPropertiesAndItsOwn()
 	{
-		var gateway = TestSupport.Deserialize<Gateway>($$"""{ {{Common}}, "ipAddress": "10.0.0.1", "mode": "Cluster" }""");
+		var gateway = TestSupport.Deserialize<Gateway>($$"""{ {{Common}}, "ipAddress": "ip-a", "mode": "Cluster" }""");
 
 		AssertDeviceBase(gateway);
-		gateway.IpAddress.Should().Be("10.0.0.1");
+		gateway.IpAddress.Should().Be("ip-a");
 		gateway.Mode.Should().Be("Cluster");
 	}
 
@@ -44,7 +44,7 @@ public sealed class DeviceBaseTests
 	public void ManagedDevices_ReadTheSharedPropertiesAndTheirOwn()
 	{
 		var managed = """
-			"partNumber": "P1", "deployment": "Standalone", "ipv4": "10.0.0.2", "ipv6": "::1"
+			"partNumber": "P1", "deployment": "Standalone", "ipv4": "ip-b", "ipv6": "::1"
 			""";
 
 		var device = TestSupport.Deserialize<Device>($$"""{ {{Common}}, {{managed}}, "deviceType": "SWITCH", "notes": "n" }""");
@@ -56,7 +56,7 @@ public sealed class DeviceBaseTests
 			AssertDeviceBase(item);
 			item.PartNumber.Should().Be("P1");
 			item.Deployment.Should().Be("Standalone");
-			item.Ipv4.Should().Be("10.0.0.2");
+			item.Ipv4.Should().Be("ip-b");
 			item.Ipv6.Should().Be("::1");
 		}
 

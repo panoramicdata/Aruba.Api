@@ -1,58 +1,47 @@
 namespace Aruba.Api.Data;
 
 /// <summary>
-/// An access point as reported by the New Central network-monitoring service.
-/// The device fields are shared with the generic <see cref="Device"/> resource;
-/// the cluster, reboot, utilisation and location fields are access-point specific.
+/// An access point as reported by the New Central network-monitoring service. The cluster, reboot,
+/// utilisation and location fields are access-point specific.
 /// </summary>
-public sealed class AccessPoint
+public sealed class AccessPoint : ManagedDevice
 {
-	/// <summary>The identifiers and labels of the device.</summary>
-	public string? SerialNumber { get; init; }
-	public string? MacAddress { get; init; }
-	public string? DeviceName { get; init; }
-	public string? Model { get; init; }
-	public string? PartNumber { get; init; }
-
-	/// <summary>The device classification and state.</summary>
-	public string? Deployment { get; init; }
-	public string? Role { get; init; }
-	public string? DeviceFunction { get; init; }
-	public string? FirmwareVersion { get; init; }
-	public string? Status { get; init; }
-
-	/// <summary>The network addresses of the device.</summary>
-	public string? Ipv4 { get; init; }
-	public string? Ipv6 { get; init; }
+	/// <summary>The public IPv4 address.</summary>
 	public string? PublicIpv4 { get; init; }
 
-	/// <summary>When the device was last seen.</summary>
-	public DateTimeOffset? LastSeenAt { get; init; }
-
-	/// <summary>The site the device belongs to.</summary>
-	public string? SiteId { get; init; }
-	public string? SiteName { get; init; }
+	/// <summary>The device role.</summary>
+	public string? Role { get; init; }
 
 	/// <summary>The Instant cluster the device is part of, when applicable.</summary>
 	public string? ClusterName { get; init; }
+
+	/// <summary>The identifier of the Instant cluster.</summary>
 	public string? ClusterId { get; init; }
 
-	/// <summary>The most recent reboot and its device group.</summary>
+	/// <summary>The reason for the most recent reboot.</summary>
 	public string? LastRebootReason { get; init; }
+
+	/// <summary>The identifier of the device group.</summary>
 	public string? DeviceGroupId { get; init; }
+
+	/// <summary>The name of the device group.</summary>
 	public string? DeviceGroupName { get; init; }
 
-	/// <summary>The resource utilisation of the device.</summary>
+	/// <summary>Current CPU utilisation, as a percentage.</summary>
 	public double? CpuUtilization { get; init; }
+
+	/// <summary>Current memory utilisation, as a percentage.</summary>
 	public double? MemoryUtilization { get; init; }
+
+	/// <summary>Current power consumption.</summary>
 	public double? PowerConsumption { get; init; }
+
+	/// <summary>The number of connected clients.</summary>
 	public int? ClientCount { get; init; }
 
-	/// <summary>The physical location of the device.</summary>
+	/// <summary>The building the device is in.</summary>
 	public string? BuildingId { get; init; }
-	public string? FloorId { get; init; }
 
-	/// <summary>The New Central identifiers of the resource.</summary>
-	public string? Id { get; init; }
-	public string? Type { get; init; }
+	/// <summary>The floor the device is on.</summary>
+	public string? FloorId { get; init; }
 }

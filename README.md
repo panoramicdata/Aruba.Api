@@ -17,6 +17,8 @@ It handles OAuth 2.0 authentication, token refresh, transient-error retries and 
 
 > This client targets **New Central** (the HPE GreenLake-hosted Aruba Central). It is not for the legacy/classic Aruba Central API.
 
+> **Upgrading from 1.1?** Version 1.2 replaces the four per-device troubleshooting interfaces with one shared `ITroubleshooting` and moves common device properties onto shared base classes. See the [migration guide](docs/migrating-to-1.2.md) for every change, the reasoning, and before/after code.
+
 ## Installation
 
 ```sh
@@ -115,13 +117,18 @@ Troubleshooting commands are asynchronous: they return a task id you poll for th
 mutating (`POST`) operations, so they require a client created with `IsReadOnly = false`
 (see [Performing writes](#performing-writes-opt-in)).
 
+One interface covers access points, AOS-CX and AOS-S switches, and gateways. The `TroubleshootingTarget` says which
+kind of device you are talking to, and `TroubleshootingCommands` names the commands.
+
 ```csharp
-var accepted = await client.AccessPointTroubleshooting.PingAsync(
+var accepted = await client.Troubleshooting.CommandAsync(
+    TroubleshootingTarget.AccessPoint,
     "AP00000001",
+    TroubleshootingCommands.Ping,
     new TroubleshootingCommandRequest { Host = "8.8.8.8", Count = 5 });
 
-var result = await client.AccessPointTroubleshooting.GetCommandResultAsync(
-    "AP00000001", command: "ping", taskId: accepted.TaskId!);
+var result = await client.Troubleshooting.GetCommandResultAsync(
+    TroubleshootingTarget.AccessPoint, "AP00000001", TroubleshootingCommands.Ping, accepted.TaskId!);
 
 Console.WriteLine(result.Output);
 ```
@@ -166,10 +173,8 @@ related notification and MSP services. Every area is reached through a property 
 | Reporting | `Reports` | List, update, run history |
 | Services — Webhooks | `Webhooks` | Full CRUD + HMAC key rotation |
 | Services — Firmware | `Firmware` | Firmware details |
-| Troubleshooting — Access Points | `AccessPointTroubleshooting` | Ping, traceroute, speed test, show commands, reboot, … |
-| Troubleshooting — AOS-CX Switches | `CxSwitchTroubleshooting` | Ping, cable test, port/PoE bounce, show commands, … |
-| Troubleshooting — AOS-S Switches | `AosSwitchTroubleshooting` | Ping, cable test, port/PoE bounce, show commands, … |
-| Troubleshooting — Gateways | `GatewayTroubleshooting` | Ping (+sweep), iperf, show commands, reboot, … |
+| Troubleshooting — Devices | `Troubleshooting` | Access points, AOS-CX and AOS-S switches and gateways: ping, traceroute, speed test, cable test, port/PoE bounce, iperf, show commands, reboot, locate, task results |
+
 | Troubleshooting — Events | `Events` | Events, extra attributes, filters |
 | MSP | `MspTenants` | List managed tenants |
 

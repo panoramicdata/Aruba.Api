@@ -86,7 +86,9 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Run tests with coverage
-      run: dotnet test --project Aruba.Api.Test/Aruba.Api.Test.csproj --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+      # The live read-only integration tests are excluded by trait, not skipped: CI has no New Central credentials,
+      # so they would fail hard here. Locally they run, and fail loudly if the Aruba:* settings are missing.
+      run: dotnet test --project Aruba.Api.Test/Aruba.Api.Test.csproj --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --filter-not-trait "Category=Integration"
 
     - name: Upload coverage to Codacy
       continue-on-error: true

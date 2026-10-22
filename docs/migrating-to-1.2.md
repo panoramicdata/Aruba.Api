@@ -142,4 +142,4 @@ Everything else is as it was: authentication, options, read-only mode, the other
 ## Getting help
 
 If something in 1.1 has no clear equivalent here, open an issue at
-<https://github.com/panoramicdata/Aruba.Api/issues> with the call you were making.
+<https://github.com/panoramicdata/PanoramicData.Aruba.Api/issues> with the call you were making.

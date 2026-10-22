@@ -203,8 +203,8 @@ typed surface grows; contributions adding typed models are welcome — see
 ## Links
 
 - [NuGet package](https://www.nuget.org/packages/PanoramicData.Aruba.Api)
-- [GitHub repository](https://github.com/panoramicdata/Aruba.Api)
-- [Issue tracker](https://github.com/panoramicdata/Aruba.Api/issues)
+- [GitHub repository](https://github.com/panoramicdata/PanoramicData.Aruba.Api)
+- [Issue tracker](https://github.com/panoramicdata/PanoramicData.Aruba.Api/issues)
 - [New Central API documentation](https://developer.arubanetworks.com/new-central/docs)
 
 ## License
